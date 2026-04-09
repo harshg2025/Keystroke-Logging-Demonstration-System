@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keystroke Logging Demo | Cybersecurity Education</title>
+  <meta name="description" content="An educational keystroke logging demonstration system for ethical cybersecurity awareness and learning." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ===================================================================
+     LOGIN PAGE
+     =================================================================== -->
+<section id="login-page">
+  <div class="login-card">
+
+    <div class="logo">
+      <div class="logo-icon">⌨️</div>
+      <h1>Keystroke Logger</h1>
+      <p class="subtitle">Cybersecurity Demonstration System</p>
+    </div>
+
+    <div class="warning-box">
+      ⚠️ <strong>DEMO MODE ONLY</strong><br/>
+      This tool is for <em>educational and ethical use only</em>.<br/>
+      Logging starts <u>only</u> after you click "Start Logging".<br/>
+      Never deploy this to monitor others without consent.
+    </div>
+
+    <form id="login-form" autocomplete="off">
+      <div class="form-group">
+        <label for="password-input">🔐 Access Password</label>
+        <input
+          id="password-input"
+          type="password"
+          placeholder="Enter password (default: demo1234)"
+          autocomplete="current-password"
+          required
+        />
+      </div>
+      <button id="login-btn" class="btn btn-primary" type="submit">
+        🔓 Enter System
+      </button>
+      <p class="error-msg" id="login-error"></p>
+    </form>
+
+    <p style="text-align:center;font-size:.72rem;color:var(--text-dim);margin-top:1.5rem">
+      Default password: <code style="color:var(--neon-blue)">demo1234</code>
+      &nbsp;|&nbsp; For educational purposes only
+    </p>
+  </div>
+</section>
+
+
+<!-- ===================================================================
+     DASHBOARD PAGE
+     =================================================================== -->
+<div id="dashboard-page">
+
+  <!-- Top Navigation -->
+  <nav class="topnav">
+    <div class="nav-brand">
+      <div class="brand-icon">⌨️</div>
+      <h2>Keystroke Logger</h2>
+      <span class="badge">DEMO</span>
+    </div>
+    <div class="nav-right">
+      <div class="status-pill off" id="status-pill">
+        <div class="status-dot"></div>
+        <span class="status-text">LOGGING OFF</span>
+      </div>
+      <button class="btn btn-secondary" id="change-pass-btn" style="font-size:.8rem;padding:.45rem .9rem">🔑 Password</button>
+      <button class="btn btn-secondary" id="logout-btn" style="font-size:.8rem;padding:.45rem .9rem">⏻ Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main Dashboard Content -->
+  <div class="dashboard-content">
+
+    <!-- Ethical Disclaimer -->
+    <div class="disclaimer-banner">
+      ⚠️ <strong>EDUCATIONAL DEMONSTRATION ONLY</strong> — This system captures keystrokes
+      <strong>only when you explicitly press "Start Logging"</strong>.
+      No hidden or background logging occurs. For cybersecurity awareness training only.
+    </div>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+      <button class="btn btn-success" id="start-btn">▶ Start Logging</button>
+      <button class="btn btn-danger"  id="stop-btn"  disabled>⏹ Stop Logging</button>
+      <button class="btn btn-secondary" id="reset-btn">🔄 Reset Session</button>
+      <button class="btn btn-outline"   id="export-btn">⬇ Export CSV</button>
+      <button class="btn btn-secondary" id="clear-storage-btn" style="color:var(--red);border-color:var(--red)">🗑 Clear All Data</button>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon red">⌨️</div>
+        <div class="stat-info">
+          <div class="label">Live Count</div>
+          <div class="value" id="count-live">0</div>
+          <div class="sub">current session</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">⚡</div>
+        <div class="stat-info">
+          <div class="label">Typing Speed</div>
+          <div class="value" id="count-kpm">0.0</div>
+          <div class="sub">keystrokes / min</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">💾</div>
+        <div class="stat-info">
+          <div class="label">Stored (Encrypted)</div>
+          <div class="value" id="count-stored">—</div>
+          <div class="sub">all-time records</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">⏱</div>
+        <div class="stat-info">
+          <div class="label">Session Duration</div>
+          <div class="value" id="count-session">—</div>
+          <div class="sub">stored sessions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="tab-live">⌨️ Live Feed</button>
+      <button class="tab-btn" data-tab="tab-analysis">📊 Analysis</button>
+      <button class="tab-btn" data-tab="tab-storage">🗄 Records</button>
+    </div>
+
+    <!-- ── TAB: Live Feed ─────────────────────────────── -->
+    <div id="tab-live" class="tab-panel active">
+      <div class="main-grid">
+
+        <!-- Live keystroke output -->
+        <div class="card">
+          <div class="card-header">
+            <h3>⌨️ Live Keystroke Feed</h3>
+            <button class="btn btn-secondary" onclick="clearFeed()" style="font-size:.75rem;padding:.3rem .7rem">Clear</button>
+          </div>
+          <div id="live-feed">
+            <p class="feed-placeholder">⌨️ Press Start Logging and begin typing…</p>
+          </div>
+        </div>
+
+        <!-- Top keys sidebar -->
+        <div class="card">
+          <div class="card-header">
+            <h3>🏆 Top Keys (Stored)</h3>
+            <button class="btn btn-secondary" onclick="refreshTopKeys()" style="font-size:.75rem;padding:.3rem .7rem">Refresh</button>
+          </div>
+          <div id="top-key-list" class="top-key-list">
+            <p style="color:var(--text-dim);font-size:.82rem;padding:.5rem">No data yet.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── TAB: Analysis ─────────────────────────────── -->
+    <div id="tab-analysis" class="tab-panel">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+        <button class="btn btn-primary" id="load-charts-btn">📊 Load Charts</button>
+        <span style="font-size:.8rem;color:var(--text-muted)">
+          Charts are generated from stored (encrypted) records.
+        </span>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="card-header"><h3>📊 Key Frequency</h3></div>
+          <div id="chart-bar"><div class="chart-placeholder">Click "Load Charts" to generate</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-header"><h3>⚡ Typing Speed Over Time</h3></div>
+          <div id="chart-kpm"><div class="chart-placeholder">Click "Load Charts" to generate</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-header"><h3>🥧 Key Type Distribution</h3></div>
+          <div id="chart-pie"><div class="chart-placeholder">Click "Load Charts" to generate</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: Records (Storage) ───────────────────── -->
+    <div id="tab-storage" class="tab-panel">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+        <button class="btn btn-primary" id="load-table-btn">🔄 Refresh Records</button>
+        <span style="font-size:.8rem;color:var(--text-muted)">
+          Showing last 100 keystrokes from encrypted storage.
+        </span>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Key</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody id="keystrokes-tbody">
+              <tr><td colspan="3" style="text-align:center;color:var(--text-dim);padding:1.5rem">Click "Refresh Records" to load.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.dashboard-content -->
+</div><!-- /#dashboard-page -->
+
+
+<!-- ===================================================================
+     Change Password Modal
+     =================================================================== -->
+<div class="modal-overlay" id="change-pass-modal">
+  <div class="modal">
+    <button class="modal-close" id="modal-close-btn">✕</button>
+    <h3>🔑 Change Password</h3>
+    <form id="change-pass-form" autocomplete="off">
+      <div class="form-group">
+        <label>Current Password</label>
+        <input id="old-password" type="password" placeholder="Current password" required />
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <input id="new-password" type="password" placeholder="New password (min 6 chars)" required />
+      </div>
+      <button class="btn btn-primary" type="submit">Update Password</button>
+      <p class="error-msg" id="change-pass-error"></p>
+    </form>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
